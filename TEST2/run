@@ -1,0 +1,8 @@
+#!/bin/tcsh
+# run C test
+echo " Run C test:"
+../bin/aftan_c_test paramc.dat
+# run gfortran test
+echo " Run gfortran test:"
+../bin/aftan_f_test paramf.dat
+exit

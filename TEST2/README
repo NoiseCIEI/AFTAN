@@ -1,0 +1,13 @@
+
+
+
+To run test execute command
+
+...> run
+
+If GMT package is installed plot maps by
+
+...> run_plot
+
+
+Compare results in ctest and ftest subdirectories with TEST1/cdir and TEST1/fdir.

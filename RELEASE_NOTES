@@ -1,0 +1,11 @@
+                        AFTAN RELEASE NOTES
+    
+This listing shows the version of the date of release, and a
+summary of the changes in that release.
+
+1.1                  2013/09/05
+        Fixed one sample shift while making simmetric cross-correlation in
+        misc.c module. Possible errror for Release 1.0 ~ 0.5 %.
+
+1.0                  2013/04/02
+        The frst release.

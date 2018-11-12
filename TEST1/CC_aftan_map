@@ -1,0 +1,94 @@
+#!/bin/tcsh
+#
+# Plot aftan maps
+#
+#
+# Plot basic aftan map
+#
+set bv1=${1}_1_DISP.0
+set bv2=${1}_1_DISP.1
+set bmap1=${1}_1_AMP
+set out_file=${1}.ps
+if( -f $out_file) rm -rf $out_file
+set SCA="-JX5/4"
+set REG="-R5/30/1.5/5"
+set color_table_1=cpt_res
+awk '{if(NR > 1) print $0}' $bmap1 > tmp.1
+set del=`awk '{if(NR == 1) printf("%7.2f",$4);}' $bmap1`
+echo "Delta=$del"
+set ran=`minmax tmp.1 | sed -e"s/>/ /g" -e"s/</ /g" -e"s/\// /"g`
+echo $ran
+makecpt -Cno_green -Z  -T60/100/5  > $color_table_1
+awk '{print $2}' $bv1 > tmp.2
+echo "@@@" >> tmp.2
+cat tmp.1 >> tmp.2
+awk 'BEGIN{n=0;fl=0}{if($1 == "@@@"){fl=1;next;}; \
+if(fl == 0){n++; x[n]=$1;next;}; j=$1;a=x[j];b='$del'/$2; \
+print a,b,$3}' tmp.2 > tmp.3
+# plot ftan field
+xyz2grd tmp.3  -Ggrdfile_top  $REG -I.8/.2
+grdsample grdfile_top  -Ggrdfile_top2 -I.05/.05 -Ql -R
+psbasemap  $SCA $REG -Ba2f1:"T, s":/a.5f.1:"Vel, km/s":WnSe -K -P -V \
+-X1 -Y6  > $out_file
+grdimage grdfile_top2 $SCA $REG -C$color_table_1 -V -K -O >> $out_file
+grdcontour grdfile_top2 -W3/133/62/38 -S500 -Af12 -Clev_int  \
+-G1.5i/2 $REG $SCA -O -K -V -P  >> $out_file
+psscale  -C$color_table_1 -D5.3/2.0/3.5/0.25 -O -K -L  >> $out_file
+rm -rf tmp.?
+# plot dispersion curves
+awk '{print $3,$4}' $bv1 | \
+psxy  $REG $SCA -W5/255/255/255 -N -O -K >> $out_file
+awk '{print $3,$5}' $bv1 | \
+psxy  $REG $SCA -W5/255/255/255 -N -O -K >> $out_file
+awk '{print $3,$4}' $bv2 | \
+psxy  $REG $SCA -W5/0/0/255 -N -O -K >> $out_file
+awk '{print $3,$5}' $bv2 | \
+psxy  $REG $SCA -W5t30_10:0/0/0/255 -N -O -K >> $out_file
+pstext -R0/10/0/10 -JX10  -V -O -K -N -G0  << END >>  $out_file
+2.5 4.3 13 0.0 1 6 $2 Distance $del km.
+END
+#
+# Plot match filtering aftan map
+#
+set bv1=${1}_2_DISP.0
+set bv2=${1}_2_DISP.1
+set bmap1=${1}_2_AMP
+set out_file=${1}.ps
+awk '{if(NR > 1) print $0}' $bmap1 > tmp.1
+set del=`awk '{if(NR == 1) printf("%7.2f",$4);}' $bmap1`
+echo "Delta=$del"
+set ran=`minmax tmp.1 | sed -e"s/>/ /g" -e"s/</ /g" -e"s/\// /"g`
+echo $ran
+makecpt -Cno_green -Z -T60/100/5  > $color_table_1
+awk '{print $2}' $bv1 > tmp.2
+echo "@@@" >> tmp.2
+cat tmp.1 >> tmp.2
+awk 'BEGIN{n=0;fl=0}{if($1 == "@@@"){fl=1;next;}; \
+if(fl == 0){n++; x[n]=$1;next;}; j=$1;a=x[j];b='$del'/$2; \
+print a,b,$3}' tmp.2 > tmp.3
+# plot ftan field
+xyz2grd tmp.3  -Ggrdfile_top  $REG -I.8/.2
+grdsample grdfile_top  -Ggrdfile_top2 -I.05/.05 -Ql -R
+psbasemap  $SCA $REG -Ba2f1:"T, s":/a.5f.1:"Vel, km/s":WnSe -O -K -P -V \
+ -Y-5  >> $out_file
+grdimage grdfile_top2 $SCA $REG -C$color_table_1 -V -K -O >> $out_file
+grdcontour grdfile_top2 -W3/133/62/38 -S500 -Af12 -Clev_int  \
+-G1.5i/2 $REG $SCA -O -K -V -P  >> $out_file
+psscale  -C$color_table_1 -D5.3/2.0/3.5/0.25 -O -K -L  >> $out_file
+rm -rf tmp.?
+# plot dispersion curves
+awk '{print $3,$4}' $bv1 | \
+psxy  $REG $SCA -W5/255/255/255 -N -O -K >> $out_file
+awk '{print $3,$5}' $bv1 | \
+psxy  $REG $SCA -W5/255/255/255 -N -O -K >> $out_file
+awk '{print $3,$4}' $bv2 | \
+psxy  $REG $SCA -W5/0/0/255 -N -O -K >> $out_file
+awk '{print $3,$5}' $bv2 | \
+psxy  $REG $SCA -W5t30_10:0/0/0/255 -N -O -K >> $out_file
+pstext -R0/10/0/10 -JX10  -V -O -N -G0  << END >>  $out_file
+2.5 4.3 13 0.0 1 6 $3 Distance $del km.
+END
+#
+rm -f cpt_res grd*
+gv $out_file &
+exit

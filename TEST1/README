@@ -1,0 +1,22 @@
+
+This directory includes precompiled results of AFTAN analysis
+performed for cross-correlation of station pair M14A-M17A 
+taken from IRIS Product [1].
+The script run makes AFTAN analysis by aftan_c_test and aftan_f_test
+and stored results in ctest and ftest subdirectory accordingly.
+The results for the both programs are identical.
+Another GMT script run_plot plots AFTAN maps (basic and phase match filtered)
+for aftan_c_test program only in the file ctest/COR_TA.M14A_TA.M17A.SAC.ps
+On both maps solid dark blue line represents cleaned segment of group 
+velocities and dashed dark blue line cleaned segment of phase velocity
+(from files ctest/COR_TA.M14A_TA.M17A.SAC_1_DISP.1 and
+COR_TA.M14A_TA.M17A.SAC_2_DISP.1). The whole range of velocities is
+plotted by white color lines and mostly overlapped by cleaned segments
+(files COR_TA.M14A_TA.M17A.SAC_1_DISP.0 and
+COR_TA.M14A_TA.M17A.SAC_2_DISP.0).
+AFTAN analysis is done for the period range 4-30 seconds, but
+due to nature of signal actual range for group and phase velocities
+is shrinked to 7-28 sec for basic AFTAN, and, even more, to 8-25 for 
+phase matched AFTAN. 
+
+To run AFTAN go to TEST2 subdirectory.
